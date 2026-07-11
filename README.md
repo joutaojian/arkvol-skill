@@ -7,9 +7,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Standard-green)](https://agentskills.io)
 [![skills.sh](https://img.shields.io/badge/skills.sh-Compatible-blue)](https://skills.sh)
-[![Multi-Runtime](https://img.shields.io/badge/Runtime-Claude%20Code%20%20Codex%20%20Cursor%20%20OpenClaw%20%20Hermes-blueviolet)](#安装)
+[![Multi-Runtime](https://img.shields.io/badge/Runtime-Claude%20Code%20%20Codex%20%20Cursor%20%20OpenClaw%20%20Hermes-blueviolet)](#2-安装skill)
 
-[Arkvol.com](https://arkvol.com) · [安装](#安装) · [配置 API Key](#配置-Api-Key) · [安全说明](#安全说明)
+[Arkvol.com](https://arkvol.com) · [安装](#2-安装skill) · [配置 API Key](#3-配置key) · [安全说明](#安全说明)
 <p align="center">
   <img src="shared/arkvol-hero-16x9.gif" alt="Arkvol Skill Hero" />
   <br/>
@@ -33,7 +33,7 @@ Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询与解读能力
 ### 获取 Key
 
 前往 [arkvol.com](https://arkvol.com) 注册或登录，从右上角头像进入 **API Key** 页面创建 Key。完整 Key 仅显示一次。
-<img src="shared/p1.png" alt="Arkvol Skill Hero" />
+<img src="shared/p1.png" alt="Arkvol API Key 创建页面" />
 
 
 
@@ -60,8 +60,10 @@ Arkvol Skill 基于开放的 [Agent Skills](https://agentskills.io) 协议，可
 npx skills add joutaojian/arkvol-skill
 ```
 
-1、安装器会自动识别当前 Runtime 并安装到对应目录。需要指定 Runtime 时，可添加 `-a claude-code`、`-a codex`、`-a cursor` 或 `-a openclaw` 等参数。
-2、进入大模型，告诉它:
+1. 安装器会自动识别当前 Runtime 并安装到对应目录。需要指定 Runtime 时，可添加 `-a claude-code`、`-a codex`、`-a cursor` 或 `-a openclaw` 等参数。
+
+2. 进入大模型，告诉它：
+
 ```text
 帮我配置 Arkvol Skill 的 API Key。我的 API Key 是：arkvol-sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
