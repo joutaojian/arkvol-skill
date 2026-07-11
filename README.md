@@ -9,7 +9,7 @@
 [![skills.sh](https://img.shields.io/badge/skills.sh-Compatible-blue)](https://skills.sh)
 [![Multi-Runtime](https://img.shields.io/badge/Runtime-Claude%20Code%20%20Codex%20%20Cursor%20%20OpenClaw%20%20Hermes-blueviolet)](#2-安装skill)
 
-[Arkvol.com](https://arkvol.com) · [安装](#2-安装skill) · [配置 API Key](#3-配置key) · [安全说明](#安全说明)
+[Arkvol.com](https://arkvol.com) · [安装](#2-安装skill) · [配置 API Key](#3-配置key) · [升级](#4-升级) · [安全说明](#安全说明)
 <p align="center">
   <img src="shared/arkvol-hero-16x9.gif" alt="Arkvol Skill Hero" />
   <br/>
@@ -24,6 +24,8 @@
 [arkvol.com](https://arkvol.com) 是覆盖 A 股、港股和美股的金融数据分析服务，通过市场情绪、贪婪与恐慌指数、板块轮动等指标，帮助用户观察市场状态和趋势。
 
 Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询与解读能力接入兼容 Agent Skills 的 AI Agent。安装后，可以直接用自然语言查询 A 股与科技板块、港股、基金与 ETF、美股中期趋势及七巨头轮动等数据，并获得包含数据日期、关键指标和风险边界的分析结果。
+
+当前源码版本见 [`VERSION`](VERSION)。
 
 > 数据仅供研究，不构成投资建议。
 
@@ -106,6 +108,13 @@ npx skills add joutaojian/arkvol-skill
 ```
 
 读取顺序：`~/.arkvol/arkvol-entry.json` → `shared/arkvol-entry.json`
+
+
+## 4. 升级
+
+通过 Agent 安装的用户，可以直接让 Agent 将 Arkvol Skill 升级到最新版本；通过通用 CLI 安装的用户可以使用 `npx skills update`。WorkBuddy 手动导入的 Skill 需要下载新版本并重新导入完整目录。
+
+完整操作步骤和版本发布规则见 [Arkvol Skill 升级指南](UPGRADING.md)。
 
 
 ## 安全说明
