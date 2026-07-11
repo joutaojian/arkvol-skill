@@ -1,0 +1,4 @@
+interface:
+  display_name: "Arkvol 市场情绪"
+  short_description: "查询 Arkvol 多市场贪婪指数、恐慌指数与轮动数据"
+  default_prompt: "Use $arkvol-greed-index to query the latest Arkvol market sentiment data."
