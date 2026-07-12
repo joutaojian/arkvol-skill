@@ -21,7 +21,7 @@ class ArkvolClient:
         validate_page(page_id)
         if not self.api_key:
             raise ArkvolClientError('缺少 API Key')
-        url = f"{self.base_url}{PAGE_DEFINITIONS[page_id]['endpoint']}"
+        url = f"{self.base_url}{PAGE_DEFINITIONS[page_id]['endpoint']}?view=summary"
         request = Request(url, headers={'X-API-Key': self.api_key, 'Accept': 'application/json'}, method='GET')
         try:
             with self._opener(request, timeout=self.timeout) as response:
