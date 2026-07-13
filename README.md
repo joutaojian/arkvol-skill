@@ -40,7 +40,8 @@ Arkvol Skill 基于开放的 [Agent Skills](https://agentskills.io) 协议，可
 打开你正在使用的 Agent（如 Claude Code、Codex、Cursor、OpenClaw、WorkBuddy 等），告诉它：
 
 ```text
-帮我安装这个 Skill：https://github.com/joutaojian/arkvol-skill，帮我配置 Arkvol Skill 的 API Key。我的 API Key 是：arkvol-sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+帮我安装这个 Skill：https://github.com/joutaojian/arkvol-skill
+帮我配置 Arkvol Skill 的 API Key。我的 API Key 是：arkvol-sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 ## 3. 更新 Skill
