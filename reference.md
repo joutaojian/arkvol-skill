@@ -1,13 +1,13 @@
 # Arkvol 数据参考
 
-每个接口返回 `{ "code": 0, "data": ..., "msg": "" }`。`data` 包含：
+脚本接收 Arkvol 聚合接口响应后，只对外输出以下合规字段白名单：
 
-- `page`、`route`、`title`、`as_of`
-- `sentiment_score`、`sentiment_label`、`summary`
-- `page_text`：页面简介、区块文字、指标定义、解释规则和提示
-- `metrics`、`items`：便于快速读取的统一摘要索引
-- `source_page_apis`：原页面只读数据来源
-- `cache`：快照版本、构建时间、数据日期和响应视图
+- `source`、`page`、`title`、`as_of`
+- `sentiment_score`、由分数确定的 `sentiment_label`
+- 根据合规字段在本地生成的中性 `metric_definitions`
+- 固定的 `limitations` 和 `notice`
+
+脚本不输出任何上游自由文本。不要绕过脚本读取、展示或转述上游原始 `summary`、`page_text`、`notes`、`metrics` 或 `items`；这些字段可能包含不适合对外输出的策略、信号、排名、预测或操作性文字。
 
 端点映射：
 
@@ -20,4 +20,4 @@
 | `greed-mid-term` | `/api/data/greed/mid-term` |
 | `us7-rotation` | `/api/data/us7-rotation` |
 
-所有请求使用 Header `X-API-Key: arkvol-sk-...` 并显式请求 `view=summary`。`summary` 是当期结论，`page_text` 是数据语义和计算口径，`metrics` 和 `items` 提供最新摘要明细。
+所有请求使用 Header `X-API-Key: arkvol-sk-...` 并显式请求 `view=summary`。不得在回答、日志或错误信息中输出完整 Key。

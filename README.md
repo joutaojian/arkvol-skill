@@ -2,7 +2,7 @@
 
 # Arkvol Skill
 
-**让 AI Agent 使用自然语言查询并解读多市场金融数据**
+**让 AI Agent 使用自然语言查询多市场聚合情绪数据**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Standard-green)](https://agentskills.io)
@@ -19,13 +19,13 @@
 
 ## 简介
 
-[arkvol.com](https://arkvol.com) 是覆盖 A 股、港股和美股的金融数据分析服务，通过市场情绪、贪婪与恐慌指数、板块轮动等指标，帮助用户观察市场状态和趋势。
+[arkvol.com](https://arkvol.com) 是覆盖 A 股、港股和美股的金融数据服务，通过市场情绪、贪婪与恐慌指数等聚合指标，帮助用户客观观察历史或当期市场状态。
 
-Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询与解读能力接入兼容 Agent Skills 的 AI Agent。安装后，可以直接用自然语言查询 A 股与科技板块、港股、基金与 ETF、美股中期趋势及七巨头轮动等数据，并获得包含数据日期、关键指标和风险边界的分析结果。
+Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询能力接入兼容 Agent Skills 的 AI Agent。安装后，可以直接用自然语言查询 A 股与科技板块、港股、基金与 ETF、美股中期情绪及七巨头历史相对表现等数据。
 
 当前源码版本见 [`VERSION`](VERSION)。
 
-> 数据仅供研究，不构成投资建议。
+> 本 Skill 仅提供带有日期和来源的非个性化、描述性市场数据及指标定义，不提供荐股、买卖、仓位、目标价、收益预测或投资组合建议。
 
 ## 1. 获取 API Key
 
@@ -54,6 +54,7 @@ Arkvol Skill 基于开放的 [Agent Skills](https://agentskills.io) 协议，可
 
 缺少 Key 时，脚本会提示前往 Arkvol 创建并写入配置文件。
 
+- 不要要求或使用本 Skill 推荐、筛选、排名金融产品或生成交易信号。
 - 仅在可信的本地或私有 Agent 会话中提供 Key，不要在 README、公开聊天、命令记录或日志中公开 Key。
 - 包含 Key 的 Skill 不得分享或上传 GitHub。
 - Key 泄露后，立即在 Arkvol 重新生成或禁用。
