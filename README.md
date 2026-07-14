@@ -58,6 +58,7 @@ Arkvol Skill 基于开放的 [Agent Skills](https://agentskills.io) 协议，可
 
 缺少 Key 时，脚本会提示前往 Arkvol 创建并写入配置文件。
 
+- 不要要求或使用本 Skill 推荐、筛选、排名金融产品或生成交易信号。
 - 仅在可信的本地或私有 Agent 会话中提供 Key，不要在 README、公开聊天、命令记录或日志中公开 Key。
 - 包含 Key 的 Skill 不得分享或上传 GitHub。
 - Key 泄露后，立即在 Arkvol 重新生成或禁用。
