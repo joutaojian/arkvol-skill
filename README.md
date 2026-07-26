@@ -24,7 +24,7 @@
 
 [arkvol.com](https://arkvol.com) is a financial data analysis service covering mainland China A-shares, Hong Kong stocks, and US stocks. It helps users observe market conditions and trends through market sentiment, fear and greed indexes, sector rotation, and related indicators.
 
-Arkvol Skill brings the data querying and interpretation capabilities of [arkvol.com](https://arkvol.com) to AI agents compatible with the Agent Skills standard. Once installed, users can query A-shares and technology sectors, Hong Kong stocks, funds and ETFs, US medium-term trends, the Magnificent Seven, global capital flows, China government bond temperature, and 52-week-low aggregate statistics using natural language. Results include the data date, key indicators, and clear risk boundaries.
+Arkvol Skill brings the data querying and interpretation capabilities of [arkvol.com](https://arkvol.com) to AI agents compatible with the Agent Skills standard. Once installed, users can query A-shares and technology sectors, Hong Kong stocks, funds and ETFs, US medium-term trends, the Magnificent Seven, global capital flows, China government bond temperature, and 52-week-low data using natural language. Version 0.3.1 exposes complete details and time series for screening, ranking, forecasting, valuation, target-range, position, and strategy analysis.
 
 See [`VERSION`](VERSION) for the current source version.
 
@@ -33,6 +33,12 @@ See [`VERSION`](VERSION) for the current source version.
 This Skill natively supports API key configuration and has been tested in practice by more than 100 users. It is a strong reference implementation for other projects that need to build an API-key-enabled Skill.
 
 Reusable design patterns include storing user credentials outside the Skill repository, defining an explicit priority order for command-line options, configuration files, and environment variables, supporting automated upgrades, providing example configuration without committing real secrets, handling authentication errors consistently, and preventing complete keys from appearing in responses or logs. Other Skill projects can directly adopt these configuration and security boundaries.
+
+## Full Analysis Capabilities
+
+Version 0.3.1 removes the previous response-field allowlist and broad question rejection rules. The Skill requests the full data view by default and exposes summaries, page semantics, metrics, instrument details, time series, rankings, and original page data to the agent.
+
+It supports objective screening, ranking, comparison, forecasting, valuation, target-range calculations, position analysis, stop-profit/stop-loss calculations, and strategy research. It does not recommend specific securities to buy or sell and does not produce stock, fund, or ETF recommendation lists.
 
 ## 1. Get an API Key
 
@@ -44,7 +50,7 @@ Register or sign in at [arkvol.com](https://arkvol.com), open **API Key** from t
 
 Arkvol Skill follows the open [Agent Skills](https://agentskills.io) standard and runs in AI agents that support Agent Skills.
 
-> Installation notice: This Skill provides market data and indicator interpretation only. It does not recommend securities and does not constitute investment advice. Users are responsible for their own investment decisions and risks.
+> Installation notice: This Skill supports full screening, ranking, forecasting, valuation, and strategy analysis, but it does not recommend specific securities to buy or sell.
 
 Open the agent you use, such as Claude Code, Codex, Cursor, OpenClaw, or WorkBuddy, and tell it:
 
@@ -61,13 +67,15 @@ What is the current sentiment in the A-share market?
 Is the global capital flow indicator currently expanding or contracting?
 What is the current temperature of China's 30-year government bond market?
 How many valid samples are currently in the 52-week-low model?
+Rank the Magnificent Seven using valuation and momentum.
+Forecast the medium-term US market trend and estimate a target range.
 ```
 
 ## 3. Update the Skill
 
 Starting with version 0.3.0, every data query checks Arkvol for the latest Skill version first. You can also ask your AI agent directly:
 
-> Update notice: This Skill provides market data and indicator interpretation only. It does not recommend securities and does not constitute investment advice. Users are responsible for their own investment decisions and risks.
+> Update notice: Versions older than the configured release are blocked by the API until the Skill is upgraded and reloaded.
 
 ```text
 Upgrade Arkvol Skill to the latest version: https://github.com/joutaojian/arkvol-skill
@@ -77,7 +85,7 @@ Upgrade Arkvol Skill to the latest version: https://github.com/joutaojian/arkvol
 
 If the API key is missing, the script directs the user to create one at Arkvol and add it to the configuration file.
 
-- Do not ask or use this Skill to recommend, screen, or rank financial products, or to generate trading signals.
+- Do not use this Skill to produce a list of specific securities to buy or sell. Objective screening, ranking, forecasting, and strategy analysis remain available.
 - Provide the key only in a trusted local or private agent session. Never expose it in a README, public chat, command history, or logs.
 - Do not share or upload a Skill installation that contains a key to GitHub.
 - If a key is exposed, regenerate or disable it in Arkvol immediately.

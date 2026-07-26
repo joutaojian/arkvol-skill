@@ -24,7 +24,7 @@
 
 [arkvol.com](https://arkvol.com) 是覆盖 A 股、港股和美股的金融数据分析服务，通过市场情绪、贪婪与恐慌指数、板块轮动等指标，帮助用户观察市场状态和趋势。
 
-Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询与解读能力接入兼容 Agent Skills 的 AI Agent。安装后，可以直接用自然语言查询 A 股与科技板块、港股、基金与 ETF、美股中期趋势、七巨头、全球资金流、中国国债温度和 52 周低位聚合统计，并获得包含数据日期、关键指标和风险边界的分析结果。
+Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询与解读能力接入兼容 Agent Skills 的 AI Agent。安装后，可以直接用自然语言查询 A 股与科技板块、港股、基金与 ETF、美股中期趋势、七巨头、全球资金流、中国国债温度和 52 周低位数据。0.3.1 提供完整明细和时间序列，支持筛选、排名、预测、估值、目标区间、仓位和策略分析。
 
 当前源码版本见 [`VERSION`](VERSION)。
 
@@ -33,6 +33,12 @@ Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询与解读能力
 这是一个原生支持 API Key 配置的 Skill，已经过 100+ 用户的实践测试，可作为其他项目开发 API-key Skill 的参考实例。
 
 可复用的设计包括：将用户密钥持久化在 Skill 仓库之外、支持命令行/配置文件/环境变量的明确优先级、支持自动化升级、使用示例配置而不提交真实密钥、统一鉴权错误处理，以及在回答和日志中避免输出完整 Key。其他项目的 Skill 可以直接借鉴这套配置与安全边界设计。
+
+## 完整分析能力
+
+0.3.1 取消了此前的响应字段白名单和宽泛问题拒绝规则。Skill 默认请求完整数据视图，将摘要、页面语义、指标、标的明细、时间序列、排名和原始页面数据全部提供给智能体。
+
+支持客观筛选、排名、比较、预测、估值、目标区间测算、仓位分析、止盈止损测算和策略研究；不提供具体证券买入/卖出推荐，也不生成股票、基金或 ETF 荐股名单。
 
 ## 1. 获取 API Key
 
@@ -44,7 +50,7 @@ Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询与解读能力
 
 Arkvol Skill 基于开放的 [Agent Skills](https://agentskills.io) 协议，可在兼容 Agent Skills 的 AI Agent 中运行。
 
-> 安装提示：本 Skill 仅提供市场数据与指标解读，不做荐股，不构成投资建议；投资决策及风险由用户自行承担。
+> 安装提示：本 Skill 开放完整筛选、排名、预测、估值和策略分析，但不提供具体证券的买入/卖出推荐。
 
 打开你正在使用的 Agent（如 Claude Code、Codex、Cursor、OpenClaw、WorkBuddy 等），告诉它：
 
@@ -60,13 +66,15 @@ Arkvol Skill 基于开放的 [Agent Skills](https://agentskills.io) 协议，可
 全球资金流蛋糕当前是扩张还是收缩？
 中国 30 年期国债温度是多少？
 52 周低位模型当前有多少有效样本？
+按估值和动量给七巨头排名。
+预测美股中期趋势并测算目标区间。
 ```
 
 ## 3. 更新 Skill
 
 0.3.0 起，每次数据查询都会先向 Arkvol 检查最新 Skill 版本。也可以主动告诉 AI Agent：
 
-> 更新提示：本 Skill 仅提供市场数据与指标解读，不做荐股，不构成投资建议；投资决策及风险由用户自行承担。
+> 更新提示：低于服务端配置版本的 Skill 会被 API 阻断，必须升级并重新加载后才能继续查询。
 
 ```text
 帮我把 Arkvol Skill 升级到最新版本：https://github.com/joutaojian/arkvol-skill
@@ -76,7 +84,7 @@ Arkvol Skill 基于开放的 [Agent Skills](https://agentskills.io) 协议，可
 
 缺少 Key 时，脚本会提示前往 Arkvol 创建并写入配置文件。
 
-- 不要要求或使用本 Skill 推荐、筛选、排名金融产品或生成交易信号。
+- 不要使用本 Skill 生成具体证券买入/卖出推荐名单；客观筛选、排名、预测和策略分析仍然开放。
 - 仅在可信的本地或私有 Agent 会话中提供 Key，不要在 README、公开聊天、命令记录或日志中公开 Key。
 - 包含 Key 的 Skill 不得分享或上传 GitHub。
 - Key 泄露后，立即在 Arkvol 重新生成或禁用。

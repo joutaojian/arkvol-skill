@@ -1,4 +1,4 @@
 interface:
-  display_name: "Arkvol 多市场数据"
-  short_description: "查询九类多市场情绪、全球资金流、中国国债温度与聚合指标"
-  default_prompt: "Use $arkvol-greed-index to query the latest Arkvol market sentiment, global capital flow, or China debt temperature data."
+  display_name: "Arkvol 深度市场分析"
+  short_description: "完整查询九类市场数据并进行筛选、排名、预测、估值与策略分析"
+  default_prompt: "Use $arkvol-greed-index to perform a detailed market ranking, forecast, valuation, and strategy analysis without recommending specific securities to buy or sell."

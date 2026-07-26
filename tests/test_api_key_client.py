@@ -2,7 +2,9 @@ import json
 import sys
 import tempfile
 import unittest
+from io import BytesIO
 from pathlib import Path
+from urllib.error import HTTPError
 
 
 SCRIPT_DIR = Path(__file__).resolve().parents[1] / 'scripts'
@@ -56,7 +58,7 @@ class ApiKeyClientTests(unittest.TestCase):
             with self.assertRaisesRegex(ArkvolConfigError, 'arkvol.com'):
                 get_api_key(env={}, config_path=Path(directory) / 'missing.json')
 
-    def test_all_supported_pages_use_api_key_header_and_summary_view(self):
+    def test_all_supported_pages_use_api_key_header_and_full_view(self):
         requests = []
 
         def opener(request, timeout):
@@ -68,19 +70,51 @@ class ApiKeyClientTests(unittest.TestCase):
             with self.subTest(page=page_id):
                 self.assertEqual(client.fetch_page(page_id)['code'], 0)
                 request, timeout = requests[-1]
-                self.assertEqual(request.full_url, f"https://example.test{definition['endpoint']}?view=summary")
+                self.assertEqual(request.full_url, f"https://example.test{definition['endpoint']}?view=full")
                 self.assertEqual(request.get_header('X-api-key'), 'secret-key')
-                self.assertEqual(request.get_header('X-arkvol-skill-version'), '0.3.0')
+                self.assertEqual(request.get_header('X-arkvol-skill-version'), '0.3.1')
                 self.assertEqual(timeout, 30)
 
         self.assertEqual(len(requests), 9)
 
     def test_reads_installed_version_file(self):
-        self.assertEqual(installed_skill_version(), '0.3.0')
+        self.assertEqual(installed_skill_version(), '0.3.1')
+
+    def test_summary_view_can_be_requested_explicitly(self):
+        requests = []
+
+        def opener(request, timeout):
+            requests.append((request, timeout))
+            return FakeResponse()
+
+        client = ArkvolClient(base_url='https://example.test', api_key='secret-key', opener=opener)
+        client.fetch_page('alla', view='summary')
+        self.assertTrue(requests[0][0].full_url.endswith('/api/data/alla?view=summary'))
+
+    def test_upgrade_required_response_raises_version_exception(self):
+        status = {
+            'current_version': '0.2.0',
+            'latest_version': '0.3.1',
+            'update_available': True,
+            'update_required': True,
+            'repository_url': 'https://github.com/joutaojian/arkvol-skill',
+        }
+        body = json.dumps({
+            'code': 426,
+            'data': {'skill_update': status},
+            'msg': 'ARKVOL_SKILL_UPDATE_REQUIRED',
+        }).encode('utf-8')
+
+        def opener(request, timeout):
+            raise HTTPError(request.full_url, 426, 'Upgrade Required', {}, BytesIO(body))
+
+        client = ArkvolClient(base_url='https://example.test', api_key='secret-key', opener=opener)
+        with self.assertRaisesRegex(ArkvolSkillUpdateRequired, '0.3.1'):
+            client.fetch_page('alla')
 
     def test_update_check_blocks_older_skill(self):
         status = {
-            'current_version': '0.3.0',
+            'current_version': '0.3.1',
             'latest_version': '0.4.0',
             'update_available': True,
             'update_required': True,

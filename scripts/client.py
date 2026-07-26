@@ -57,9 +57,11 @@ class ArkvolClient:
             raise ArkvolSkillUpdateRequired(status)
         return status
 
-    def fetch_page(self, page_id):
+    def fetch_page(self, page_id, view='full'):
         validate_page(page_id)
-        payload = self._request_json(f"{PAGE_DEFINITIONS[page_id]['endpoint']}?view=summary")
+        if view not in {'summary', 'full'}:
+            raise ArkvolClientError('view 必须是 summary 或 full')
+        payload = self._request_json(f"{PAGE_DEFINITIONS[page_id]['endpoint']}?view={view}")
         update = payload.get('data', {}).get('skill_update') if isinstance(payload.get('data'), dict) else None
         if isinstance(update, dict) and update.get('update_required') is True:
             raise ArkvolSkillUpdateRequired(update)
@@ -91,6 +93,14 @@ class ArkvolClient:
                     'msg': '',
                 }
             payload = _read_error_payload(exc)
+            if exc.code == 426:
+                data = payload.get('data') if isinstance(payload, dict) else None
+                status = data.get('skill_update') if isinstance(data, dict) else None
+                if isinstance(status, dict):
+                    raise ArkvolSkillUpdateRequired(status) from exc
+                raise ArkvolClientError(
+                    payload.get('msg') or 'Arkvol Skill 版本过旧，必须升级后重试'
+                ) from exc
             message = payload.get('msg') if isinstance(payload, dict) else None
             if exc.code == 401:
                 raise ArkvolClientError(message or 'API Key 无效或缺失') from exc

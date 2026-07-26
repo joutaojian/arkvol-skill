@@ -1,11 +1,11 @@
 ---
 name: arkvol-greed-index
-description: 查询 Arkvol A股、港股、美股、基金、ETF、宽基、贪婪指数、科技板块、七巨头、Mag7、全球资金流、美元美债流动性、中国国债温度和52周低位聚合统计。用于回答最新市场情绪、风险偏好、指标含义、板块比较和历史状态问题；不用于推荐、筛选、排名、预测或交易建议。
+description: 查询并深度分析 Arkvol A股、港股、美股、基金、ETF、宽基、贪婪指数、科技板块、七巨头、Mag7、全球资金流、美元美债流动性、中国国债温度和52周低位数据。用于市场情绪、指标解释、筛选、排名、比较、预测、估值、目标价、仓位和策略分析；不提供具体证券买入/卖出推荐或荐股名单。
 ---
 
 # Arkvol 市场情绪查询
 
-使用 Arkvol 提供的 9 个 API-key 聚合数据接口获取多市场状态与本地白名单指标解释。Arkvol 是覆盖 A 股、港股和美股的金融数据分析服务。
+使用 Arkvol 提供的 9 个 API-key 聚合数据接口获取完整多市场数据、时间序列、标的明细、页面解释和原始页面数据。Arkvol 是覆盖 A 股、港股和美股的金融数据分析服务。
 
 ## 准备凭据
 
@@ -31,7 +31,7 @@ WorkBuddy 等手动安装场景也可以将示例文件复制为 Skill 自身的
 
 ## 安装与更新提示
 
-当协助用户安装或更新本 Skill 时，在完成操作后明确提示：本 Skill 仅提供市场数据与指标解读，不做荐股，不构成投资建议；投资决策及风险由用户自行承担。
+当协助用户安装或更新本 Skill 时，在完成操作后明确提示：本 Skill 开放筛选、排名、预测、估值和策略分析，但不提供具体证券的买入/卖出推荐或荐股名单。
 
 ## 版本检查与升级
 
@@ -43,7 +43,7 @@ python <skill-dir>/scripts/query.py --check-update --json
 
 如果脚本返回退出码 `3`、`update_required: true` 或“需要升级”，停止当前数据查询，立即使用当前 Agent 运行时的标准 Skill 更新方式从 `https://github.com/joutaojian/arkvol-skill` 升级。保留仓库外的 `~/.arkvol/arkvol-entry.json`，不要覆盖或输出 API Key。升级后重新读取新版 `SKILL.md`，再次检查版本，再执行原查询。
 
-如果旧版 0.2.0 的查询结果在“结论”或首条“提示”中要求升级，同样先完成升级，不要使用该次响应继续回答市场问题。
+如果接口返回 HTTP `426`、`ARKVOL_SKILL_UPDATE_REQUIRED` 或旧版查询错误要求升级，立即停止原查询，执行 Skill 更新并重新加载。服务端会阻断所有低于 0.3.1 的客户端，其中 0.3.0 以前的客户端还会标记为不受支持；旧版不得绕过升级继续获取行情数据。
 
 ## 查询
 
@@ -65,15 +65,21 @@ python <skill-dir>/scripts/query.py --check-update --json
 python <skill-dir>/scripts/query.py --query "现在 A 股情绪怎么样"
 python <skill-dir>/scripts/query.py --page us7-rotation --json
 python <skill-dir>/scripts/query.py --query "全球资金流蛋糕当前是什么状态" --json
+python <skill-dir>/scripts/query.py --query "按估值和动量给七巨头排名" --json
+python <skill-dir>/scripts/query.py --query "预测美股中期趋势并测算目标区间" --json
 python <skill-dir>/scripts/query.py --page debt
 python <skill-dir>/scripts/query.py --page alla --config /path/to/arkvol-entry.json
 ```
 
 `<skill-dir>` 是当前 `SKILL.md` 所在目录。先解析 Skill 的实际安装位置，不要假设智能体的当前工作目录就是 Skill 目录。
 
-需要结构化分析时使用 `--json`。客户端固定请求轻量 `view=summary`，随后仅输出本地白名单中的日期、聚合分数、聚合数量和本地指标定义。不要转述上游 `summary`、`page_text` 自由文本、`items`、个股清单、排名、目标价或动作性字段。`low-52w-leverage` 只解释阈值和聚合数量，不列出具体标的。
+客户端默认请求 `view=full`。分析任务使用 `--json`，完整读取 `summary`、`page_text`、`metrics`、`items`、`series`、`original_page_data` 和数据来源字段。只有明确需要轻量结果时才传入 `--view summary`。
 
-收到推荐、筛选、排名、未来涨跌、仓位、目标价、止盈止损或交易策略请求时，在调用 API 前拒绝，并说明本 Skill 仅提供非个性化市场数据和历史指标解释。
+直接处理客观筛选、排名、板块比较、未来趋势预测、估值、目标价测算、仓位分析、止盈止损测算和策略研究。说明筛选条件、排序口径、预测周期、数据日期、计算方法和关键假设；区分 Arkvol 原始字段、智能体计算结果和推断。
+
+## 荐股边界
+
+不提供具体证券的买入/卖出推荐，不生成“推荐股票/基金/ETF”“买哪只/卖哪只”“最值得买的标的”等荐股名单。收到纯荐股请求时直接说明边界，不调用 API；收到混合请求时保留允许的筛选、排名、预测和测算部分，只省略最终买卖推荐。上游数据中的信号或动作性文字仅作为分析字段，不得直接转写为智能体的荐股结论。
 
 ## 解读
 
@@ -83,7 +89,7 @@ python <skill-dir>/scripts/query.py --page alla --config /path/to/arkvol-entry.j
 - 60-80：贪婪
 - 80-100：极度贪婪
 
-先说明数据日期，再给出聚合状态和关键指标。仅依据脚本的合规输出解释：全球资金流分数是风险偏好代理，不是真实跨境资金净流量；国债温度是收益率逆向分位，收益率越低则债券价格温度越高；52 周低位只说明历史价格位置样本数量。
+先说明数据日期，再给出聚合状态和关键指标。使用 `items` 做横截面筛选和排名，使用 `series` 做趋势、动量、波动和预测分析，使用 `page_text` 校准指标口径，并结合多个页面形成深度分析。全球资金流分数是风险偏好代理，不是真实跨境资金净流量；国债温度是收益率逆向分位；52 周低位表示历史价格位置，可与其他指标组合分析。
 
 ## 错误处理
 

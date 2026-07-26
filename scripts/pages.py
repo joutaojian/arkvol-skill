@@ -66,63 +66,6 @@ PAGE_DEFINITIONS = {
     },
 }
 
-SAFE_PAGE_VIEWS = {
-    'alla': {
-        'title': 'A 股市场情绪数据',
-        'metric_name': '市场情绪分数',
-        'metric_description': '0至100的聚合状态指标，仅描述历史或当期市场情绪。',
-        'statistics': ('tracked_etfs',),
-    },
-    'alla-tech': {
-        'title': 'A 股科技板块市场情绪数据',
-        'metric_name': '科技板块情绪分数',
-        'metric_description': '0至100的聚合状态指标，仅描述科技 ETF 的当期市场情绪。',
-        'statistics': ('tracked_etfs', 'low_sentiment_count'),
-    },
-    'funds-greed': {
-        'title': 'A 股基金市场情绪数据',
-        'metric_name': '基金板块情绪分数',
-        'metric_description': '0至100的聚合状态指标，仅描述基金板块的当期市场情绪。',
-        'statistics': ('sector_count', 'fund_count'),
-    },
-    'gll': {
-        'title': 'A 股 ETF 乖离率统计',
-        'metric_name': '聚合市场情绪分数',
-        'metric_description': '如有值，仅用于描述当期聚合市场状态。',
-        'statistics': ('etf_count', 'average_liability_rate'),
-    },
-    'greed-mid-term': {
-        'title': '美股中期市场情绪数据',
-        'metric_name': '美股中期情绪分数',
-        'metric_description': '0至100的聚合状态指标，仅描述美股观察样本的当期市场情绪。',
-        'statistics': ('tracked_tickers', 'custom_tickers'),
-    },
-    'us7-rotation': {
-        'title': '美股七姐妹市场状态数据',
-        'metric_name': '七姐妹聚合情绪分数',
-        'metric_description': '0至100的聚合状态指标，仅描述观察样本的当期市场情绪。',
-        'statistics': ('stock_count', 'low_valuation_count'),
-    },
-    'global-capital-flow': {
-        'title': '全球市场风险偏好统计',
-        'metric_name': '全球风险偏好分数',
-        'metric_description': '0至100的五市场风险偏好代理；大于等于55为扩张，小于等于45为收缩，其余为平衡。',
-        'statistics': ('cake_index', 'market_count', 'eligible_market_count', 'macro_pressure_score'),
-    },
-    'debt': {
-        'title': '中国国债温度数据',
-        'metric_name': '国债价格温度',
-        'metric_description': '0至100的30年期国债收益率逆向分位温度；收益率越低，价格温度越高，并按极冷至过热分档。',
-        'statistics': ('current_rate_30y', 'range_min_rate', 'range_max_rate', 'history_points'),
-    },
-    'low-52w-leverage': {
-        'title': '52 周低位样本聚合统计',
-        'metric_name': '聚合市场情绪分数',
-        'metric_description': '如有值，仅用于描述当期聚合市场状态。',
-        'statistics': ('threshold_pct', 'scanned_count', 'matched_count', 'stale_count'),
-    },
-}
-
 _EXPLICIT_GLOBAL_FLOW = ['全球资金流', '全球资金轮动', '资金蛋糕', '全球轮动', '市场轮动', '流动性闸门', '美元美债']
 _EXPLICIT_US7 = ['美股七巨头', '美股七姐妹', '七巨头', '七姐妹', 'mag7', '科技七雄', '轮动']
 _EXPLICIT_MID_TERM = ['美股贪婪', '恐慌贪婪', '中期', '中线', '中期信号']
