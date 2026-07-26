@@ -1,11 +1,11 @@
 ---
 name: arkvol-greed-index
-description: 查询 Arkvol A股、港股、美股、基金、ETF、宽基、贪婪指数、恐慌指数、情绪、科技板块、七巨头、Mag7、轮动、中期趋势、全A、恒生、沪深等市场情绪数据。用于回答最新市场情绪、指标含义、板块比较和历史趋势问题。
+description: 查询 Arkvol A股、港股、美股、基金、ETF、宽基、贪婪指数、科技板块、七巨头、Mag7、全球资金流、美元美债流动性、中国国债温度和52周低位聚合统计。用于回答最新市场情绪、风险偏好、指标含义、板块比较和历史状态问题；不用于推荐、筛选、排名、预测或交易建议。
 ---
 
 # Arkvol 市场情绪查询
 
-使用 Arkvol 提供的 6 个聚合数据接口获取市场情绪摘要和解释文字。Arkvol 是覆盖 A 股、港股和美股的金融数据分析服务。
+使用 Arkvol 提供的 9 个 API-key 聚合数据接口获取多市场状态与本地白名单指标解释。Arkvol 是覆盖 A 股、港股和美股的金融数据分析服务。
 
 ## 准备凭据
 
@@ -33,6 +33,18 @@ WorkBuddy 等手动安装场景也可以将示例文件复制为 Skill 自身的
 
 当协助用户安装或更新本 Skill 时，在完成操作后明确提示：本 Skill 仅提供市场数据与指标解读，不做荐股，不构成投资建议；投资决策及风险由用户自行承担。
 
+## 版本检查与升级
+
+在每次市场数据查询前检查版本；`query.py` 也会在数据请求前强制执行同一检查：
+
+```bash
+python <skill-dir>/scripts/query.py --check-update --json
+```
+
+如果脚本返回退出码 `3`、`update_required: true` 或“需要升级”，停止当前数据查询，立即使用当前 Agent 运行时的标准 Skill 更新方式从 `https://github.com/joutaojian/arkvol-skill` 升级。保留仓库外的 `~/.arkvol/arkvol-entry.json`，不要覆盖或输出 API Key。升级后重新读取新版 `SKILL.md`，再次检查版本，再执行原查询。
+
+如果旧版 0.2.0 的查询结果在“结论”或首条“提示”中要求升级，同样先完成升级，不要使用该次响应继续回答市场问题。
+
 ## 查询
 
 根据问题选择页面：
@@ -43,18 +55,25 @@ WorkBuddy 等手动安装场景也可以将示例文件复制为 Skill 自身的
 - 港股、恒生、全球、海外、乖离率：`gll`
 - 美股贪婪、中期、中线、趋势：`greed-mid-term`
 - 美股七巨头、七姐妹、Mag7、轮动：`us7-rotation`
+- 全球资金流、资金蛋糕、全球轮动、美元美债流动性闸门：`global-capital-flow`
+- 中国国债、30 年期收益率、国债价格温度：`debt`
+- 52 周低位、GGBL 杠杆样本聚合数量：`low-52w-leverage`
 
 执行：
 
 ```bash
 python <skill-dir>/scripts/query.py --query "现在 A 股情绪怎么样"
 python <skill-dir>/scripts/query.py --page us7-rotation --json
+python <skill-dir>/scripts/query.py --query "全球资金流蛋糕当前是什么状态" --json
+python <skill-dir>/scripts/query.py --page debt
 python <skill-dir>/scripts/query.py --page alla --config /path/to/arkvol-entry.json
 ```
 
 `<skill-dir>` 是当前 `SKILL.md` 所在目录。先解析 Skill 的实际安装位置，不要假设智能体的当前工作目录就是 Skill 目录。
 
-需要结构化分析时使用 `--json`。客户端固定请求轻量 `view=summary`；必须保留响应中的 `page_text`、`metrics` 和 `items`，用 `page_text` 解释指标、计算口径和风险边界，不要仅凭字段名推断。
+需要结构化分析时使用 `--json`。客户端固定请求轻量 `view=summary`，随后仅输出本地白名单中的日期、聚合分数、聚合数量和本地指标定义。不要转述上游 `summary`、`page_text` 自由文本、`items`、个股清单、排名、目标价或动作性字段。`low-52w-leverage` 只解释阈值和聚合数量，不列出具体标的。
+
+收到推荐、筛选、排名、未来涨跌、仓位、目标价、止盈止损或交易策略请求时，在调用 API 前拒绝，并说明本 Skill 仅提供非个性化市场数据和历史指标解释。
 
 ## 解读
 
@@ -64,7 +83,7 @@ python <skill-dir>/scripts/query.py --page alla --config /path/to/arkvol-entry.j
 - 60-80：贪婪
 - 80-100：极度贪婪
 
-先说明数据日期，再给出情绪结论和关键指标。区分当期 `summary` 与稳定的 `page_text` 解释。
+先说明数据日期，再给出聚合状态和关键指标。仅依据脚本的合规输出解释：全球资金流分数是风险偏好代理，不是真实跨境资金净流量；国债温度是收益率逆向分位，收益率越低则债券价格温度越高；52 周低位只说明历史价格位置样本数量。
 
 ## 错误处理
 

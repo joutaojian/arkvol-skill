@@ -5,14 +5,14 @@ import unittest
 from pathlib import Path
 
 
-SCRIPT_DIR = Path(__file__).resolve().parent / 'scripts'
+SCRIPT_DIR = Path(__file__).resolve().parents[1] / 'scripts'
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 import query
 
 
-def args(query_text=None, page=None, as_json=False):
+def args(query_text=None, page=None, as_json=False, check_update=False):
     return argparse.Namespace(
         query=query_text,
         page=page,
@@ -20,14 +20,26 @@ def args(query_text=None, page=None, as_json=False):
         config=None,
         base_url='https://example.test',
         as_json=as_json,
+        check_update=check_update,
     )
 
 
 class FakeClient:
     calls = 0
+    version_checks = 0
 
     def __init__(self, **_kwargs):
         pass
+
+    def ensure_current_version(self):
+        type(self).version_checks += 1
+        return {
+            'current_version': '0.3.0',
+            'latest_version': '0.3.0',
+            'update_available': False,
+            'update_required': False,
+            'repository_url': 'https://github.com/joutaojian/arkvol-skill',
+        }
 
     def fetch_page(self, page_id):
         type(self).calls += 1
@@ -56,6 +68,7 @@ class FakeClient:
 class ComplianceTests(unittest.TestCase):
     def setUp(self):
         FakeClient.calls = 0
+        FakeClient.version_checks = 0
 
     def test_actionable_queries_are_rejected_before_api_call(self):
         prompts = [
@@ -82,6 +95,8 @@ class ComplianceTests(unittest.TestCase):
 
     def test_descriptive_query_remains_available(self):
         output = query.run(args(query_text='现在 A 股情绪怎么样'), client_class=FakeClient)
+        self.assertEqual(FakeClient.version_checks, 1)
+        self.assertEqual(FakeClient.calls, 1)
         self.assertIn('数据来源：Arkvol', output)
         self.assertIn('市场情绪：中性', output)
         self.assertIn('市场情绪分数', output)
@@ -123,6 +138,52 @@ class ComplianceTests(unittest.TestCase):
     def test_general_us_query_does_not_route_to_specific_stocks(self):
         output = query.run(args(query_text='现在美股情绪怎么样'), client_class=FakeClient)
         self.assertIn('美股中期市场情绪数据', output)
+
+    def test_new_market_modules_are_matched(self):
+        cases = {
+            '全球资金轮动如何': 'global-capital-flow',
+            '中国国债温度是多少': 'debt',
+            '52周低位杠杆模型有多少样本': 'low-52w-leverage',
+        }
+        for prompt, expected in cases.items():
+            with self.subTest(prompt=prompt):
+                self.assertEqual(query.match_page(prompt)['page'], expected)
+
+    def test_low_52w_page_never_exposes_instrument_list(self):
+        output = query.run(args(page='low-52w-leverage', as_json=True), client_class=FakeClient)
+        serialized = json.dumps(json.loads(output), ensure_ascii=False)
+        self.assertNotIn('TEST', serialized)
+        self.assertNotIn('signal', serialized)
+
+    def test_page_specific_score_labels_are_derived_locally(self):
+        payload = FakeClient().fetch_page('global-capital-flow')
+        global_view = query.build_compliance_view(payload, 'global-capital-flow')
+        debt_view = query.build_compliance_view(payload, 'debt')
+
+        self.assertEqual(global_view['state_label'], '扩张')
+        self.assertEqual(debt_view['state_label'], '适中')
+        self.assertNotIn('sentiment_label', global_view)
+        self.assertNotIn('sentiment_label', debt_view)
+
+    def test_check_update_can_run_without_market_page(self):
+        output = query.run(args(check_update=True, as_json=True), client_class=FakeClient)
+        payload = json.loads(output)
+        self.assertEqual(payload['current_version'], '0.3.0')
+        self.assertFalse(payload['update_required'])
+        self.assertEqual(FakeClient.calls, 0)
+
+    def test_required_update_stops_before_market_request(self):
+        class FutureVersionClient(FakeClient):
+            def ensure_current_version(self):
+                raise query.ArkvolSkillUpdateRequired({
+                    'current_version': '0.3.0',
+                    'latest_version': '0.4.0',
+                    'repository_url': 'https://github.com/joutaojian/arkvol-skill',
+                })
+
+        with self.assertRaises(query.ArkvolSkillUpdateRequired):
+            query.run(args(page='alla'), client_class=FutureVersionClient)
+        self.assertEqual(FutureVersionClient.calls, 0)
 
 
 if __name__ == '__main__':

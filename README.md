@@ -1,15 +1,18 @@
 <div align="center">
 
+**English** | [简体中文](README.zh-CN.md)
+
 # Arkvol Skill
 
-**让 AI Agent 使用自然语言查询并解读多市场金融数据**
+**Query and interpret multi-market financial data with natural language in AI agents**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Standard-green)](https://agentskills.io)
 [![skills.sh](https://img.shields.io/badge/skills.sh-Compatible-blue)](https://skills.sh)
-[![Multi-Runtime](https://img.shields.io/badge/Runtime-Claude%20Code%20%20Codex%20%20Cursor%20%20OpenClaw%20%20Hermes-blueviolet)](#2-安装-skill)
+[![Multi-Runtime](https://img.shields.io/badge/Runtime-Claude%20Code%20%20Codex%20%20Cursor%20%20OpenClaw%20%20Hermes-blueviolet)](#2-install-the-skill)
 
-[Arkvol.com](https://arkvol.com) · [安装](#2-安装-skill) · [更新](#3-更新) · [安全说明](#安全说明)
+[Arkvol.com](https://arkvol.com) · [Install](#2-install-the-skill) · [Update](#3-update-the-skill) · [Security](#security)
+
 <p align="center">
   <img src="shared/arkvol-hero-16x9.gif" alt="Arkvol Skill Hero" />
   <br/>
@@ -17,48 +20,64 @@
 
 </div>
 
-## 简介
+## Overview
 
-[arkvol.com](https://arkvol.com) 是覆盖 A 股、港股和美股的金融数据分析服务，通过市场情绪、贪婪与恐慌指数、板块轮动等指标，帮助用户观察市场状态和趋势。
+[arkvol.com](https://arkvol.com) is a financial data analysis service covering mainland China A-shares, Hong Kong stocks, and US stocks. It helps users observe market conditions and trends through market sentiment, fear and greed indexes, sector rotation, and related indicators.
 
-Arkvol Skill 将 [arkvol.com](https://arkvol.com) 的数据查询与解读能力接入兼容 Agent Skills 的 AI Agent。安装后，可以直接用自然语言查询 A 股与科技板块、港股、基金与 ETF、美股中期趋势及七巨头轮动等数据，并获得包含数据日期、关键指标和风险边界的分析结果。
+Arkvol Skill brings the data querying and interpretation capabilities of [arkvol.com](https://arkvol.com) to AI agents compatible with the Agent Skills standard. Once installed, users can query A-shares and technology sectors, Hong Kong stocks, funds and ETFs, US medium-term trends, the Magnificent Seven, global capital flows, China government bond temperature, and 52-week-low aggregate statistics using natural language. Results include the data date, key indicators, and clear risk boundaries.
 
-当前源码版本见 [`VERSION`](VERSION)。
+See [`VERSION`](VERSION) for the current source version.
 
-## 1. 获取 API Key
+## API Key Skill Reference Implementation
 
-前往 [arkvol.com](https://arkvol.com) 注册或登录，从右上角头像进入 **API Key** 页面创建 Key。完整 Key 仅显示一次。
+This Skill natively supports API key configuration and has been tested in practice by more than 100 users. It is a strong reference implementation for other projects that need to build an API-key-enabled Skill.
 
-<img src="shared/p1.png" alt="Arkvol API Key 创建页面" />
+Reusable design patterns include storing user credentials outside the Skill repository, defining an explicit priority order for command-line options, configuration files, and environment variables, supporting automated upgrades, providing example configuration without committing real secrets, handling authentication errors consistently, and preventing complete keys from appearing in responses or logs. Other Skill projects can directly adopt these configuration and security boundaries.
 
-## 2. 安装 Skill
+## 1. Get an API Key
 
-Arkvol Skill 基于开放的 [Agent Skills](https://agentskills.io) 协议，可在兼容 Agent Skills 的 AI Agent 中运行。
+Register or sign in at [arkvol.com](https://arkvol.com), open **API Key** from the avatar menu in the upper-right corner, and create a key. The complete key is displayed only once.
 
-> 安装提示：本 Skill 仅提供市场数据与指标解读，不做荐股，不构成投资建议；投资决策及风险由用户自行承担。
+<img src="shared/p1.png" alt="Arkvol API Key creation page" />
 
-打开你正在使用的 Agent（如 Claude Code、Codex、Cursor、OpenClaw、WorkBuddy 等），告诉它：
+## 2. Install the Skill
 
-```text
-帮我安装这个 Skill：https://github.com/joutaojian/arkvol-skill，帮我配置 Arkvol Skill 的 API Key。
-我的 API Key 是：arkvol-sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
+Arkvol Skill follows the open [Agent Skills](https://agentskills.io) standard and runs in AI agents that support Agent Skills.
 
-## 3. 更新 Skill
+> Installation notice: This Skill provides market data and indicator interpretation only. It does not recommend securities and does not constitute investment advice. Users are responsible for their own investment decisions and risks.
 
-需要更新时，告诉 AI Agent：
-
-> 更新提示：本 Skill 仅提供市场数据与指标解读，不做荐股，不构成投资建议；投资决策及风险由用户自行承担。
+Open the agent you use, such as Claude Code, Codex, Cursor, OpenClaw, or WorkBuddy, and tell it:
 
 ```text
-帮我把 Arkvol Skill 升级到最新版本：https://github.com/joutaojian/arkvol-skill
+Install this Skill: https://github.com/joutaojian/arkvol-skill
+Help me configure the Arkvol Skill API key.
+My API key is: [replace with your API key]
 ```
 
-## 安全说明
+After installation, you can ask questions such as:
 
-缺少 Key 时，脚本会提示前往 Arkvol 创建并写入配置文件。
+```text
+What is the current sentiment in the A-share market?
+Is the global capital flow indicator currently expanding or contracting?
+What is the current temperature of China's 30-year government bond market?
+How many valid samples are currently in the 52-week-low model?
+```
 
-- 不要要求或使用本 Skill 推荐、筛选、排名金融产品或生成交易信号。
-- 仅在可信的本地或私有 Agent 会话中提供 Key，不要在 README、公开聊天、命令记录或日志中公开 Key。
-- 包含 Key 的 Skill 不得分享或上传 GitHub。
-- Key 泄露后，立即在 Arkvol 重新生成或禁用。
+## 3. Update the Skill
+
+Starting with version 0.3.0, every data query checks Arkvol for the latest Skill version first. You can also ask your AI agent directly:
+
+> Update notice: This Skill provides market data and indicator interpretation only. It does not recommend securities and does not constitute investment advice. Users are responsible for their own investment decisions and risks.
+
+```text
+Upgrade Arkvol Skill to the latest version: https://github.com/joutaojian/arkvol-skill
+```
+
+## Security
+
+If the API key is missing, the script directs the user to create one at Arkvol and add it to the configuration file.
+
+- Do not ask or use this Skill to recommend, screen, or rank financial products, or to generate trading signals.
+- Provide the key only in a trusted local or private agent session. Never expose it in a README, public chat, command history, or logs.
+- Do not share or upload a Skill installation that contains a key to GitHub.
+- If a key is exposed, regenerate or disable it in Arkvol immediately.
